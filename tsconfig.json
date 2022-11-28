@@ -3,6 +3,7 @@
     "outDir": "dist",
     "target": "ESNext",
     "module": "CommonJS",
-    "rootDir": "src"
+    "rootDir": "src",
+    "jsx": "react-jsx"
   }
 }
