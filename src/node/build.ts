@@ -1,36 +1,35 @@
-import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants/index';
-import { build as viteBuild, InlineConfig } from 'vite';
-import pluginReact from '@vitejs/plugin-react';
-import { RollupOutput } from 'rollup';
-import path from 'path';
-import fs from 'fs-extra';
+import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from "./constants/index";
+import { build as viteBuild, InlineConfig } from "vite";
+import pluginReact from "@vitejs/plugin-react";
+import { RollupOutput } from "rollup";
+import path from "path";
+import fs from "fs-extra";
 
 // 打包
 export async function bundle(root: string) {
   try {
-
     const resolveViteConfig = (isServer: boolean): InlineConfig => {
       return {
-        mode: 'production',
+        mode: "production",
         root,
         build: {
           ssr: isServer,
-          outDir: isServer ? '.temp' : 'build',
+          outDir: isServer ? ".temp" : "build",
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
             output: {
-              format: isServer ? 'cjs' : 'esm'
+              format: isServer ? "cjs" : "esm"
             }
           }
         },
         plugins: [pluginReact()]
-      }
+      };
     };
     const clientBuild = async () => {
-      return viteBuild(resolveViteConfig(false))
+      return viteBuild(resolveViteConfig(false));
     };
     const serverBuild = async () => {
-      return viteBuild(resolveViteConfig(true))
+      return viteBuild(resolveViteConfig(true));
     };
     // 构建客户端和服务端
     const [clientBundle, serverBundle] = await Promise.all([
@@ -50,7 +49,9 @@ export async function renderPage(
   clientBundle: RollupOutput
 ) {
   // 客户端入口chunk文件
-  const clientChunk = clientBundle?.output?.find(chunk => chunk.type === 'chunk' && chunk.isEntry);
+  const clientChunk = clientBundle?.output?.find(
+    (chunk) => chunk.type === "chunk" && chunk.isEntry
+  );
   // 获取静态HTML内容
   const appHtml = render();
   const html = `
@@ -71,19 +72,19 @@ export async function renderPage(
   
   </html>
   `.trim();
-  await fs.ensureDir(path.join(root, 'build'));
+  await fs.ensureDir(path.join(root, "build"));
   // 将渲染好的html写入到文件中
-  await fs.writeFile(path.join(root, 'build/index.html'), html);
+  await fs.writeFile(path.join(root, "build/index.html"), html);
   // 删除服务端文件
-  await fs.remove(path.join(root, '.temp'));
+  await fs.remove(path.join(root, ".temp"));
 }
 
 export async function build(root: string) {
   //1. build -> client + server
   const [clientBundle, serverBundle] = await bundle(root);
   //2. 引入server-entry模块
-  const serverEntryPath = path.join(root, '.temp', 'server-entry.js');
+  const serverEntryPath = path.join(root, ".temp", "server-entry.js");
   //3. 服务端渲染，产出HTML
   const { render } = await import(serverEntryPath);
-  await renderPage(render, root, clientBundle)
+  await renderPage(render, root, clientBundle);
 }

@@ -1,8 +1,6 @@
-
-import { useState } from 'react';
+import { useState } from "react";
 
 export function Layout(props) {
-
   const [count, setCount] = useState<number>(0);
 
   return (

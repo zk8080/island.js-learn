@@ -1,12 +1,11 @@
-import { defineConfig } from 'tsup';
-
+import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entryPoints: ['src/node/cli.ts'],
+  entryPoints: ["src/node/cli.ts"],
   bundle: true,
   splitting: true,
-  outDir: 'dist',
-  format: ['cjs', 'esm'],
+  outDir: "dist",
+  format: ["cjs", "esm"],
   dts: true,
   shims: true
-})
+});
