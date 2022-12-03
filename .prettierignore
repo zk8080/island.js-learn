@@ -1,4 +1,5 @@
 .eslintrc.cjs
+.prettierrc.cjs
 node_modules
 dist
 bin
