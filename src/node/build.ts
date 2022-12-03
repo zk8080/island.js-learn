@@ -2,8 +2,8 @@ import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants/index';
 import { build as viteBuild, InlineConfig } from 'vite';
 import pluginReact from '@vitejs/plugin-react';
 import { RollupOutput } from 'rollup';
-import * as path from 'path';
-import * as fs from 'fs-extra';
+import path from 'path';
+import fs from 'fs-extra';
 
 // 打包
 export async function bundle(root: string) {
@@ -84,6 +84,6 @@ export async function build(root: string) {
   //2. 引入server-entry模块
   const serverEntryPath = path.join(root, '.temp', 'server-entry.js');
   //3. 服务端渲染，产出HTML
-  const { render } = require(serverEntryPath);
+  const { render } = await import(serverEntryPath);
   await renderPage(render, root, clientBundle)
 }

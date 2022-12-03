@@ -1,11 +1,9 @@
 import { cac } from 'cac';
-import path = require('path');
+import path from 'path';
 import { build } from './build';
 import { createDevServer } from './dev';
 
-const version = require('../../package.json').version;
-
-const cli = cac('island').version(version).help();
+const cli = cac('island').version('0.0.1').help();
 
 cli
   .command("[root]", "start dev servce")
