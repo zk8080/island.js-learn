@@ -32,10 +32,7 @@ export async function bundle(root: string) {
       return viteBuild(resolveViteConfig(true));
     };
     // 构建客户端和服务端
-    const [clientBundle, serverBundle] = await Promise.all([
-      clientBuild(),
-      serverBuild()
-    ]);
+    const [clientBundle, serverBundle] = await Promise.all([clientBuild(), serverBuild()]);
 
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
@@ -43,15 +40,9 @@ export async function bundle(root: string) {
   }
 }
 
-export async function renderPage(
-  render: () => string,
-  root: string,
-  clientBundle: RollupOutput
-) {
+export async function renderPage(render: () => string, root: string, clientBundle: RollupOutput) {
   // 客户端入口chunk文件
-  const clientChunk = clientBundle?.output?.find(
-    (chunk) => chunk.type === "chunk" && chunk.isEntry
-  );
+  const clientChunk = clientBundle?.output?.find((chunk) => chunk.type === "chunk" && chunk.isEntry);
   // 获取静态HTML内容
   const appHtml = render();
   const html = `

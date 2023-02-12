@@ -2,7 +2,7 @@ import { resolve } from "path";
 import fs from "fs-extra";
 import { loadConfigFromFile } from "vite";
 
-import { UserConfig } from "../shared/types/index";
+import { SiteConfig, UserConfig } from "../shared/types/index";
 
 type RawConfig = UserConfig | Promise<UserConfig> | (() => UserConfig | Promise<UserConfig>);
 
@@ -17,7 +17,7 @@ function getUserConfigPath(root: string) {
   }
 }
 
-export async function resolveConfig(root: string, command: "serve" | "build", mode: "development" | "production") {
+export async function resovleUserCofig(root: string, command: "serve" | "build", mode: "development" | "production") {
   // 1. 获取配置文件路径
   const configPath = getUserConfigPath(root);
   // 2. 读取配置文件的内容
@@ -41,4 +41,32 @@ export async function resolveConfig(root: string, command: "serve" | "build", mo
   } else {
     return [configPath, {} as UserConfig] as const;
   }
+}
+
+export function resolveSiteData(userConfig: UserConfig): UserConfig {
+  return {
+    title: userConfig.title || "Island.js",
+    description: userConfig.description || "SSG Framework",
+    themeConfig: userConfig.themeConfig || {},
+    vite: userConfig.vite || {}
+  };
+}
+
+export async function resolveConfig(
+  root: string,
+  command: "serve" | "build",
+  mode: "development" | "production"
+): Promise<SiteConfig> {
+  const [configPath, userConfig] = await resovleUserCofig(root, command, mode);
+  const siteData: SiteConfig = {
+    root,
+    configPath,
+    siteData: resolveSiteData(userConfig as UserConfig)
+  };
+
+  return siteData;
+}
+
+export function defineConfig(config: UserConfig) {
+  return config;
 }

@@ -1,7 +1,6 @@
 import { cac } from "cac";
 import path from "path";
 import { build } from "./build";
-import { createDevServer } from "./dev";
 
 const cli = cac("island").version("0.0.1").help();
 
@@ -10,9 +9,16 @@ cli
   .alias("dev")
   .action(async (root) => {
     root = root ? path.resolve(root) : process.cwd();
-    const server = await createDevServer(root);
-    await server.listen();
-    server.printUrls();
+    const createServer = async () => {
+      const { createDevServer } = await import("./dev.js");
+      const server = await createDevServer(root, async () => {
+        await server.close();
+        await createServer();
+      });
+      await server.listen();
+      server.printUrls();
+    };
+    await createServer();
   });
 
 cli.command("build [root]", "start dev servce").action(async (root) => {
