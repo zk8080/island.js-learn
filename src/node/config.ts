@@ -1,6 +1,6 @@
 import { resolve } from "path";
 import fs from "fs-extra";
-import { loadConfigFromFile } from "vite";
+import { loadConfigFromFile, normalizePath } from "vite";
 
 import { SiteConfig, UserConfig } from "../shared/types/index";
 
@@ -10,7 +10,7 @@ function getUserConfigPath(root: string) {
   try {
     const supportConfigFiles = ["config.ts", "config.js"];
     const configPath = supportConfigFiles.map((file) => resolve(root, file)).find(fs.pathExistsSync);
-    return configPath;
+    return normalizePath(configPath);
   } catch (e) {
     console.error(`Failed to load user config: ${e}`);
     throw e;
