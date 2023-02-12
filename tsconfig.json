@@ -3,10 +3,14 @@
     "outDir": "dist",
     "target": "ESNext",
     "module": "CommonJS",
-    "rootDir": "src",
+    "rootDir": ".",
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "paths": {
+      "@runtime": ["./runtime/index.ts"],
+      "shared/*": ["shared/*"]
+    },
   }
 }

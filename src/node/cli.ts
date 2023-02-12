@@ -1,6 +1,7 @@
 import { cac } from "cac";
 import path from "path";
 import { build } from "./build";
+import { resolveConfig } from "./config";
 
 const cli = cac("island").version("0.0.1").help();
 
@@ -23,7 +24,8 @@ cli
 
 cli.command("build [root]", "start dev servce").action(async (root) => {
   root = root ? path.resolve(root) : process.cwd();
-  await build(root);
+  const config = await resolveConfig(root, "build", "production");
+  await build(root, config);
 });
 
 cli.parse();

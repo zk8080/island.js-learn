@@ -10,8 +10,13 @@ export async function createDevServer(root = process.cwd(), restart: () => Promi
   console.log(config);
 
   return createViteDevServer({
-    root,
-    plugins: [pluginIndexHtml(), pluginReact(), pluginConfig(config, restart)],
+    plugins: [
+      pluginIndexHtml(),
+      pluginReact({
+        jsxRuntime: "automatic"
+      }),
+      pluginConfig(config, restart)
+    ],
     server: {
       fs: {
         allow: [PACKAGE_ROOT]

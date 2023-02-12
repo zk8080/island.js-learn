@@ -4,17 +4,20 @@ import pluginReact from "@vitejs/plugin-react";
 import { RollupOutput } from "rollup";
 import path from "path";
 import fs from "fs-extra";
+import { SiteConfig } from "shared/types";
+import { pluginConfig } from "./plugin-island/config";
 
 // 打包
-export async function bundle(root: string) {
+export async function bundle(root: string, config: SiteConfig) {
   try {
     const resolveViteConfig = (isServer: boolean): InlineConfig => {
       return {
         mode: "production",
         root,
         build: {
+          minify: false,
           ssr: isServer,
-          outDir: isServer ? ".temp" : "build",
+          outDir: isServer ? path.join(root, ".temp") : "build",
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
             output: {
@@ -22,7 +25,10 @@ export async function bundle(root: string) {
             }
           }
         },
-        plugins: [pluginReact()]
+        ssr: {
+          noExternal: ["react-router-dom"]
+        },
+        plugins: [pluginReact(), pluginConfig(config)]
       };
     };
     const clientBuild = async () => {
@@ -70,12 +76,16 @@ export async function renderPage(render: () => string, root: string, clientBundl
   await fs.remove(path.join(root, ".temp"));
 }
 
-export async function build(root: string) {
+export async function build(root: string, config: SiteConfig) {
   //1. build -> client + server
-  const [clientBundle, serverBundle] = await bundle(root);
+  const [clientBundle, serverBundle] = await bundle(root, config);
   //2. 引入server-entry模块
   const serverEntryPath = path.join(root, ".temp", "server-entry.js");
   //3. 服务端渲染，产出HTML
   const { render } = await import(serverEntryPath);
-  await renderPage(render, root, clientBundle);
+  try {
+    await renderPage(render, root, clientBundle);
+  } catch (e) {
+    console.log("Render page error.\n", e);
+  }
 }

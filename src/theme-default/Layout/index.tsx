@@ -1,15 +1,11 @@
-import { useState } from "react";
+import { Content } from "@runtime";
 
-export function Layout(props) {
-  const [count, setCount] = useState<number>(0);
-
+export function Layout() {
   return (
     <div>
-      <h1>This is Layout Component</h1>
-      <div>
-        {count}
-        <button onClick={() => setCount(count + 1)}>Add Count</button>
-      </div>
+      <h1>Common Content</h1>
+      <h1>Doc Content</h1>
+      <Content />
     </div>
   );
 }
