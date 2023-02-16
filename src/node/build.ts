@@ -6,6 +6,7 @@ import path from "path";
 import fs from "fs-extra";
 import { SiteConfig } from "shared/types";
 import { pluginConfig } from "./plugin-island/config";
+import { pluginRoutes } from "./plugin-routes";
 
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
@@ -28,7 +29,13 @@ export async function bundle(root: string, config: SiteConfig) {
         ssr: {
           noExternal: ["react-router-dom"]
         },
-        plugins: [pluginReact(), pluginConfig(config)]
+        plugins: [
+          pluginReact(),
+          pluginConfig(config),
+          pluginRoutes({
+            root: config.root
+          })
+        ]
       };
     };
     const clientBuild = async () => {

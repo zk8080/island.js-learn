@@ -4,10 +4,10 @@ import { pluginIndexHtml } from "./plugin-island/indexHtml";
 import pluginReact from "@vitejs/plugin-react";
 import { resolveConfig } from "./config";
 import { pluginConfig } from "./plugin-island/config";
+import { pluginRoutes } from "./plugin-routes";
 
 export async function createDevServer(root = process.cwd(), restart: () => Promise<void>) {
   const config = await resolveConfig(root, "serve", "development");
-  console.log(config);
 
   return createViteDevServer({
     plugins: [
@@ -15,7 +15,10 @@ export async function createDevServer(root = process.cwd(), restart: () => Promi
       pluginReact({
         jsxRuntime: "automatic"
       }),
-      pluginConfig(config, restart)
+      pluginConfig(config, restart),
+      pluginRoutes({
+        root: config.root
+      })
     ],
     server: {
       fs: {
