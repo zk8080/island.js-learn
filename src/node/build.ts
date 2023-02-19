@@ -1,12 +1,10 @@
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from "./constants/index";
 import { build as viteBuild, InlineConfig } from "vite";
-import pluginReact from "@vitejs/plugin-react";
 import { RollupOutput } from "rollup";
 import path from "path";
 import fs from "fs-extra";
 import { SiteConfig } from "shared/types";
-import { pluginConfig } from "./plugin-island/config";
-import { pluginRoutes } from "./plugin-routes";
+import { createVitePlugins } from "./vitePlugins";
 
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
@@ -29,13 +27,7 @@ export async function bundle(root: string, config: SiteConfig) {
         ssr: {
           noExternal: ["react-router-dom"]
         },
-        plugins: [
-          pluginReact(),
-          pluginConfig(config),
-          pluginRoutes({
-            root: config.root
-          })
-        ]
+        plugins: createVitePlugins(config)
       };
     };
     const clientBuild = async () => {
