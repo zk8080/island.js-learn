@@ -5,6 +5,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import { Plugin } from "vite";
+import { rehypePluginPreWrapper } from "./rehypePlugins/preWrapper";
 
 export function pluginMdxRollup() {
   return pluginMdx({
@@ -22,7 +23,8 @@ export function pluginMdxRollup() {
             value: "#"
           }
         }
-      ]
+      ],
+      rehypePluginPreWrapper
     ]
   }) as unknown as Plugin;
 }
