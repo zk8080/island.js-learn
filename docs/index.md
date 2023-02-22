@@ -9,3 +9,11 @@ title: 'island'
 ## Autolink 
 
 literals www.example.com, https://example.com, and contact@example.com.
+
+```tsx
+interface TestType {
+  a: string;
+}
+
+import React from 'react';
+```

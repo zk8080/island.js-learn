@@ -1,3 +1,4 @@
+import shiki from "shiki";
 import pluginMdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
@@ -6,8 +7,9 @@ import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import { Plugin } from "vite";
 import { rehypePluginPreWrapper } from "./rehypePlugins/preWrapper";
+import { rehypePluginShiki } from "./rehypePlugins/shiki";
 
-export function pluginMdxRollup() {
+export async function pluginMdxRollup() {
   return pluginMdx({
     remarkPlugins: [remarkGfm, remarkFrontmatter, [remarkMdxFrontmatter, { name: "frontmatter" }]],
     rehypePlugins: [
@@ -24,7 +26,13 @@ export function pluginMdxRollup() {
           }
         }
       ],
-      rehypePluginPreWrapper
+      rehypePluginPreWrapper,
+      [
+        rehypePluginShiki,
+        {
+          highlighter: await shiki.getHighlighter({ theme: "nord" })
+        }
+      ]
     ]
   }) as unknown as Plugin;
 }
