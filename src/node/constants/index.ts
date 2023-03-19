@@ -7,3 +7,5 @@ export const DEFAULT_HTML_PATH = join(PACKAGE_ROOT, "template.html");
 export const CLIENT_ENTRY_PATH = join(PACKAGE_ROOT, "src", "runtime", "client-entry.tsx");
 
 export const SERVER_ENTRY_PATH = join(PACKAGE_ROOT, "src", "runtime", "server-entry.tsx");
+
+export const MD_REGEX = /\.mdx?$/;
