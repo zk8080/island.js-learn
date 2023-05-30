@@ -1,5 +1,8 @@
-import { Content, usePageData } from "@runtime";
+import { usePageData } from "@runtime";
 import "uno.css";
+import "../styles/base.css";
+import "../styles/vars.css";
+import { Nav } from "../components/Nav/index";
 
 export function Layout() {
   const pageData = usePageData();
@@ -16,5 +19,10 @@ export function Layout() {
       return <div>404 页面</div>;
     }
   };
-  return <div>{getContent()}</div>;
+  return (
+    <div pt="14">
+      <Nav />
+      {getContent()}
+    </div>
+  );
 }
