@@ -20,6 +20,7 @@ module.exports = {
     semi: ["error", "always"],
     "@typescript-eslint/no-non-null-assertion": "off",
     "react/react-in-jsx-scope": "off",
+    "react/no-unknown-property": "off"
   },
   settings: {
     react: {
