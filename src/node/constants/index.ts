@@ -9,3 +9,5 @@ export const CLIENT_ENTRY_PATH = join(PACKAGE_ROOT, "src", "runtime", "client-en
 export const SERVER_ENTRY_PATH = join(PACKAGE_ROOT, "src", "runtime", "server-entry.tsx");
 
 export const MD_REGEX = /\.mdx?$/;
+
+export const PUBLIC_DIR = "public";

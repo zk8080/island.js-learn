@@ -1,7 +1,9 @@
-import { PACKAGE_ROOT } from "../../node/constants";
+import { PACKAGE_ROOT, PUBLIC_DIR } from "../../node/constants";
 import { join, relative } from "path";
 import { SiteConfig } from "shared/types/index";
 import { Plugin } from "vite";
+import sirv from "sirv";
+import fs from "fs-extra";
 
 const SITE_DATA_ID = "island:site-data";
 
@@ -39,6 +41,12 @@ export function pluginConfig(config: SiteConfig, restartServer?: () => Promise<v
       if (include(ctx.file)) {
         console.log(`\n ${relative(config.root, ctx.file)} changed, restarting server....`);
         await restartServer?.();
+      }
+    },
+    configureServer(server) {
+      const publicDir = join(config.root, PUBLIC_DIR);
+      if (fs.pathExistsSync(publicDir)) {
+        server.middlewares.use(sirv(publicDir));
       }
     }
   };

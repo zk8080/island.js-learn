@@ -17,8 +17,8 @@ export function Nav() {
   const { siteData } = usePageData();
   const nav = siteData.themeConfig.nav || [];
   return (
-    <header fixed="~" w="full" pos="top-0 left-0">
-      <div flex="~" items="center" justify="between" className="px-8 h-14 divider-bottom">
+    <header fixed="~" pos="t-0 l-0" w="full" z="10">
+      <div flex="~" items="center" justify="between" className={`h-14 divider-bottom ${styles.nav}`}>
         <div>
           <a href="/" hover="opacity-60" className="w-full h-full text-1rem font-semibold flex items-center">
             Island.js
