@@ -2,13 +2,13 @@ import { usePageData } from "@runtime";
 import "uno.css";
 import "../styles/base.css";
 import "../styles/vars.css";
+import "../styles/doc.css";
 import { Nav } from "../components/Nav/index";
 import { HomeLayout } from "./HomeLayout";
 import { DocLayout } from "./DocLayout/inde";
 
 export function Layout() {
   const pageData = usePageData();
-  console.log(pageData, "--pageData--");
   // 获取 pageType
   const { pageType } = pageData;
   // 根据 pageType 分发不同的页面内容
@@ -24,7 +24,14 @@ export function Layout() {
   return (
     <div>
       <Nav />
-      {getContent()}
+      <section
+        style={{
+          paddingTop: "var(--island-nav-height)"
+        }}
+      >
+        {" "}
+        {getContent()}
+      </section>
     </div>
   );
 }

@@ -1,6 +1,8 @@
-import { usePageData } from "@runtime";
+import { usePageData, Content } from "@runtime";
 import { useLocation } from "react-router-dom";
 import { Sidebar } from "../../components/SiderBar";
+import { DocFooter } from "../../components/DocFooter/index";
+import styles from "./index.module.scss";
 
 export function DocLayout(props) {
   const { siteData } = usePageData();
@@ -18,6 +20,14 @@ export function DocLayout(props) {
   return (
     <div>
       <Sidebar sidebarData={matchedSidebar} pathname={pathname} />
+      <div className={styles.content}>
+        <div>
+          <div className="island-doc">
+            <Content />
+          </div>
+          <DocFooter />
+        </div>
+      </div>
     </div>
   );
 }
