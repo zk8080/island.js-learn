@@ -11,3 +11,5 @@ export const SERVER_ENTRY_PATH = join(PACKAGE_ROOT, "src", "runtime", "server-en
 export const MD_REGEX = /\.mdx?$/;
 
 export const PUBLIC_DIR = "public";
+
+export const MASK_SPLITTER = "!!ISLAND!!";
