@@ -5,8 +5,6 @@ import { Root } from "mdast";
 import type { MdxjsEsm } from "mdast-util-mdxjs-esm";
 import { parse } from "acorn";
 
-const slugger = new Slugger();
-
 interface TocItem {
   id: string;
   text: string;
@@ -23,6 +21,7 @@ export const remarkPluginToc: Plugin<[], Root> = () => {
   return (tree) => {
     // 初始化 toc 数组
     const toc: TocItem[] = [];
+    const slugger = new Slugger();
 
     visit(tree, "heading", (node) => {
       if (!node.depth || !node.children) {

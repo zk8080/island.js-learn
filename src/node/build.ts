@@ -26,7 +26,7 @@ export async function bundle(root: string, config: SiteConfig) {
           }
         },
         ssr: {
-          noExternal: ["react-router-dom"]
+          noExternal: ["react-router-dom", "lodash-es"]
         },
         plugins: await createVitePlugins(config, undefined, isServer)
       };
@@ -58,7 +58,7 @@ export async function renderPage(
     routes.map(async (route) => {
       const routePath = route.path;
       // 获取静态HTML内容
-      const appHtml = render(routePath);
+      const appHtml = await render(routePath);
       const html = `
   <!DOCTYPE html>
   <html lang="en">
