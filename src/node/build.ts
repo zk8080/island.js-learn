@@ -84,8 +84,8 @@ export async function renderPage(
     })
   );
 
-  // 删除服务端文件
-  await fs.remove(path.join(root, ".temp"));
+  // // 删除服务端文件
+  // await fs.remove(path.join(root, ".temp"));
 }
 
 export async function build(root: string, config: SiteConfig) {

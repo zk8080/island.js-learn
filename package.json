@@ -14,7 +14,7 @@
     "test:e2e": "playwright test"
   },
   "bin": {
-    "island": "bin/island.js"
+    "island-learn": "bin/island.js"
   },
   "keywords": [],
   "author": "",

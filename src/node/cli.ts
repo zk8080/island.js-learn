@@ -3,7 +3,7 @@ import path from "path";
 import { build } from "./build";
 import { resolveConfig } from "./config";
 
-const cli = cac("island").version("0.0.1").help();
+const cli = cac("island-learn").version("0.0.1").help();
 
 cli
   .command("[root]", "start dev servce")
