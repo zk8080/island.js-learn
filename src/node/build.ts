@@ -1,4 +1,4 @@
-import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from "./constants/index";
+import { CLIENT_ENTRY_PATH, MASK_SPLITTER, SERVER_ENTRY_PATH } from "./constants/index";
 import { build as viteBuild, InlineConfig } from "vite";
 import { RollupOutput } from "rollup";
 import path from "path";
@@ -6,6 +6,7 @@ import fs from "fs-extra";
 import { SiteConfig } from "shared/types";
 import { createVitePlugins } from "./vitePlugins";
 import { Route } from "./plugin-routes";
+import { RenderResult } from "runtime/server-entry";
 
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
@@ -46,8 +47,61 @@ export async function bundle(root: string, config: SiteConfig) {
   }
 }
 
+export async function buildIslands(root: string, islandPathToMap: Record<string, string>) {
+  // 根据 islandPathToMap 拼接模块代码内容
+  const islandsInjectCode = `
+   ${Object.entries(islandPathToMap)
+     .map(([islandName, islandPath]) => `import { ${islandName} } from '${islandPath}';`)
+     .join("")}
+window.ISLANDS = { ${Object.keys(islandPathToMap).join(", ")} };
+window.ISLAND_PROPS = JSON.parse(
+ document.getElementById('island-props').textContent
+);
+ `;
+  const injectId = "island:inject";
+  return viteBuild({
+    mode: "production",
+    build: {
+      outDir: path.join(root, ".temp"),
+      rollupOptions: {
+        input: injectId
+      }
+    },
+    plugins: [
+      // 重点插件，用来加载我们拼接的 Islands 注册模块的代码
+      {
+        name: injectId,
+        enforce: "post",
+        resolveId(id) {
+          if (id.includes(MASK_SPLITTER)) {
+            const [originId, importer] = id.split(MASK_SPLITTER);
+            return this.resolve(originId, importer, { skipSelf: true });
+          }
+
+          if (id === injectId) {
+            return id;
+          }
+        },
+        load(id) {
+          if (id === injectId) {
+            return islandsInjectCode;
+          }
+        },
+        // 对于 Islands Bundle，我们只需要 JS 即可，其它资源文件可以删除
+        generateBundle(_, bundle) {
+          for (const name in bundle) {
+            if (bundle[name].type === "asset") {
+              delete bundle[name];
+            }
+          }
+        }
+      }
+    ]
+  });
+}
+
 export async function renderPage(
-  render: (pagePath: string) => string,
+  render: (pagePath: string) => RenderResult,
   routes: Route[],
   root: string,
   clientBundle: RollupOutput
@@ -58,7 +112,8 @@ export async function renderPage(
     routes.map(async (route) => {
       const routePath = route.path;
       // 获取静态HTML内容
-      const appHtml = await render(routePath);
+      const { appHtml, islandToPathMap, propsData } = await render(routePath);
+      await buildIslands(root, islandToPathMap);
       const html = `
   <!DOCTYPE html>
   <html lang="en">
