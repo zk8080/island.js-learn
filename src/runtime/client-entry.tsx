@@ -34,7 +34,6 @@ async function renderInBrowser() {
     for (const island of islands) {
       // Aside:0
       const [id, index] = island.getAttribute("__island").split(":");
-      console.log(window.ISLANDS, "--window.ISLANDS--");
       const Element = window.ISLANDS[id] as ComponentType<unknown>;
       hydrateRoot(island, <Element {...window.ISLAND_PROPS[index]} />);
     }

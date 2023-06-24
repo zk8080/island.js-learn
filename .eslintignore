@@ -7,3 +7,4 @@ docs
 build
 .temp
 *.d.ts
+vendors

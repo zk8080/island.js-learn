@@ -1,4 +1,4 @@
-import { CLIENT_ENTRY_PATH, MASK_SPLITTER, SERVER_ENTRY_PATH } from "./constants/index";
+import { CLIENT_ENTRY_PATH, MASK_SPLITTER, PACKAGE_ROOT, SERVER_ENTRY_PATH } from "./constants/index";
 import { build as viteBuild, InlineConfig } from "vite";
 import type { RollupOutput } from "rollup";
 import path from "path";
@@ -9,6 +9,8 @@ import { Route } from "./plugin-routes";
 import type { RenderResult } from "runtime/server-entry";
 
 const CLIENT_OUTPUT = "build";
+export const EXTERNALS = ["react", "react-dom", "react-dom/client", "react/jsx-runtime"];
+const normalizeVendorFilename = (fileName: string) => fileName.replace(/\//g, "_") + ".js";
 
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
@@ -25,7 +27,8 @@ export async function bundle(root: string, config: SiteConfig) {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
             output: {
               format: isServer ? "cjs" : "esm"
-            }
+            },
+            external: EXTERNALS
           }
         },
         ssr: {
@@ -46,6 +49,7 @@ export async function bundle(root: string, config: SiteConfig) {
     if (fs.pathExistsSync(publicDir)) {
       await fs.copy(publicDir, path.join(root, CLIENT_OUTPUT));
     }
+    await fs.copy(path.join(PACKAGE_ROOT, "vendors"), path.join(root, CLIENT_OUTPUT));
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
     console.log(e);
@@ -66,10 +70,14 @@ window.ISLAND_PROPS = JSON.parse(
   const injectId = "island:inject";
   return viteBuild({
     mode: "production",
+    esbuild: {
+      jsx: "automatic"
+    },
     build: {
       outDir: path.join(root, ".temp"),
       rollupOptions: {
-        input: injectId
+        input: injectId,
+        external: EXTERNALS
       }
     },
     plugins: [
@@ -132,6 +140,13 @@ export async function renderPage(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     ${styleAssets.map((item) => `<link rel="stylesheet" href="/${item.fileName}" />`).join("\n")}
+    <script type="importmap">
+    {
+      "imports": {
+        ${EXTERNALS.map((name) => `"${name}": "/${normalizeVendorFilename(name)}"`).join(",")}
+      }
+    }
+  </script>
   </head>
   <body>
     <div id="root">${appHtml}</div>
