@@ -121,7 +121,12 @@ export async function renderPage(
   // 客户端入口chunk文件
   const clientChunk = clientBundle?.output?.find((chunk) => chunk.type === "chunk" && chunk.isEntry);
   await Promise.all(
-    routes.map(async (route) => {
+    [
+      ...routes,
+      {
+        path: "/404"
+      }
+    ].map(async (route) => {
       const routePath = route.path;
       const helmetContext = {
         context: {}
