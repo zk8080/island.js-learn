@@ -1,12 +1,14 @@
 import { CLIENT_ENTRY_PATH, MASK_SPLITTER, SERVER_ENTRY_PATH } from "./constants/index";
 import { build as viteBuild, InlineConfig } from "vite";
-import { RollupOutput } from "rollup";
+import type { RollupOutput } from "rollup";
 import path from "path";
 import fs from "fs-extra";
-import { SiteConfig } from "shared/types";
+import type { SiteConfig } from "shared/types";
 import { createVitePlugins } from "./vitePlugins";
 import { Route } from "./plugin-routes";
-import { RenderResult } from "runtime/server-entry";
+import type { RenderResult } from "runtime/server-entry";
+
+const CLIENT_OUTPUT = "build";
 
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
@@ -18,7 +20,7 @@ export async function bundle(root: string, config: SiteConfig) {
         build: {
           minify: false,
           ssr: isServer,
-          outDir: isServer ? path.join(root, ".temp") : path.join(root, "build"),
+          outDir: isServer ? path.join(root, ".temp") : path.join(root, CLIENT_OUTPUT),
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
             output: {
@@ -40,19 +42,22 @@ export async function bundle(root: string, config: SiteConfig) {
     };
     // 构建客户端和服务端
     const [clientBundle, serverBundle] = await Promise.all([clientBuild(), serverBuild()]);
-
+    const publicDir = path.join(root, "public");
+    if (fs.pathExistsSync(publicDir)) {
+      await fs.copy(publicDir, path.join(root, CLIENT_OUTPUT));
+    }
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
     console.log(e);
   }
 }
 
-export async function buildIslands(root: string, islandPathToMap: Record<string, string>) {
+async function buildIslands(root: string, islandPathToMap: Record<string, string>) {
   // 根据 islandPathToMap 拼接模块代码内容
   const islandsInjectCode = `
-   ${Object.entries(islandPathToMap)
-     .map(([islandName, islandPath]) => `import { ${islandName} } from '${islandPath}';`)
-     .join("")}
+    ${Object.entries(islandPathToMap)
+      .map(([islandName, islandPath]) => `import { ${islandName} } from '${islandPath}';`)
+      .join("")}
 window.ISLANDS = { ${Object.keys(islandPathToMap).join(", ")} };
 window.ISLAND_PROPS = JSON.parse(
  document.getElementById('island-props').textContent
@@ -112,22 +117,27 @@ export async function renderPage(
     routes.map(async (route) => {
       const routePath = route.path;
       // 获取静态HTML内容
-      const { appHtml, islandToPathMap, propsData } = await render(routePath);
-      await buildIslands(root, islandToPathMap);
+      const { appHtml, islandToPathMap, propsData = [] } = await render(routePath);
+      const islandBundle = await buildIslands(root, islandToPathMap);
+      const islandsCode = (islandBundle as RollupOutput).output[0].code;
+      const styleAssets = clientBundle.output.filter(
+        (chunk) => chunk.type === "asset" && chunk.fileName.endsWith(".css")
+      );
       const html = `
   <!DOCTYPE html>
   <html lang="en">
   
   <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    ${styleAssets.map((item) => `<link rel="stylesheet" href="/${item.fileName}" />`).join("\n")}
   </head>
-  
   <body>
     <div id="root">${appHtml}</div>
-    <script src="/${clientChunk?.fileName}" type="module"></script>
+    <script type="module">${islandsCode}</script>
+    <script type="module" src="/${clientChunk?.fileName}"></script>
+    <script id="island-props">${JSON.stringify(propsData)}</script>
   </body>
   
   </html>
