@@ -13,3 +13,5 @@ export const MD_REGEX = /\.mdx?$/;
 export const PUBLIC_DIR = "public";
 
 export const MASK_SPLITTER = "!!ISLAND!!";
+
+export const EXTERNALS = ["react", "react-dom", "react-dom/client", "react/jsx-runtime"];

@@ -1,4 +1,4 @@
-import { CLIENT_ENTRY_PATH, MASK_SPLITTER, PACKAGE_ROOT, SERVER_ENTRY_PATH } from "./constants/index";
+import { CLIENT_ENTRY_PATH, MASK_SPLITTER, PACKAGE_ROOT, SERVER_ENTRY_PATH, EXTERNALS } from "./constants/index";
 import { build as viteBuild, InlineConfig } from "vite";
 import type { RollupOutput } from "rollup";
 import path from "path";
@@ -7,11 +7,10 @@ import type { SiteConfig } from "shared/types";
 import { createVitePlugins } from "./vitePlugins";
 import { Route } from "./plugin-routes";
 import type { RenderResult } from "runtime/server-entry";
+import type { HelmetData } from "react-helmet-async";
 
 const CLIENT_OUTPUT = "build";
-export const EXTERNALS = ["react", "react-dom", "react-dom/client", "react/jsx-runtime"];
 const normalizeVendorFilename = (fileName: string) => fileName.replace(/\//g, "_") + ".js";
-
 // 打包
 export async function bundle(root: string, config: SiteConfig) {
   try {
@@ -114,7 +113,7 @@ window.ISLAND_PROPS = JSON.parse(
 }
 
 export async function renderPage(
-  render: (pagePath: string) => RenderResult,
+  render: (pagePath: string, helmetContext: object) => RenderResult,
   routes: Route[],
   root: string,
   clientBundle: RollupOutput
@@ -124,13 +123,18 @@ export async function renderPage(
   await Promise.all(
     routes.map(async (route) => {
       const routePath = route.path;
+      const helmetContext = {
+        context: {}
+      } as HelmetData;
       // 获取静态HTML内容
-      const { appHtml, islandToPathMap, propsData = [] } = await render(routePath);
-      const islandBundle = await buildIslands(root, islandToPathMap);
-      const islandsCode = (islandBundle as RollupOutput).output[0].code;
+      const { appHtml, islandToPathMap, propsData = [] } = await render(routePath, helmetContext.context);
       const styleAssets = clientBundle.output.filter(
         (chunk) => chunk.type === "asset" && chunk.fileName.endsWith(".css")
       );
+      const islandBundle = await buildIslands(root, islandToPathMap);
+      const islandsCode = (islandBundle as RollupOutput).output[0].code;
+      const { helmet } = helmetContext.context;
+
       const html = `
   <!DOCTYPE html>
   <html lang="en">
@@ -138,7 +142,10 @@ export async function renderPage(
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    ${helmet?.title?.toString() || ""}
+    ${helmet?.meta?.toString() || ""}
+    ${helmet?.link?.toString() || ""}
+    ${helmet?.style?.toString() || ""}
     ${styleAssets.map((item) => `<link rel="stylesheet" href="/${item.fileName}" />`).join("\n")}
     <script type="importmap">
     {

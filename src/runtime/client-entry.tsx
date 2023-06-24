@@ -3,6 +3,7 @@ import { App, initPageData } from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { DataContext } from "./hooks";
 import type { ComponentType } from "react";
+import { HelmetProvider } from "react-helmet-async";
 
 declare global {
   interface Window {
@@ -20,11 +21,13 @@ async function renderInBrowser() {
     // 初始化 PageData
     const pageData = await initPageData(location.pathname);
     createRoot(containerEl).render(
-      <BrowserRouter>
-        <DataContext.Provider value={pageData}>
-          <App />
-        </DataContext.Provider>
-      </BrowserRouter>
+      <HelmetProvider>
+        <BrowserRouter>
+          <DataContext.Provider value={pageData}>
+            <App />
+          </DataContext.Provider>
+        </BrowserRouter>
+      </HelmetProvider>
     );
   } else {
     const islands = document.querySelectorAll("[__island]");

@@ -22,10 +22,13 @@ export const remarkPluginToc: Plugin<[], Root> = () => {
     // 初始化 toc 数组
     const toc: TocItem[] = [];
     const slugger = new Slugger();
-
+    let title = "";
     visit(tree, "heading", (node) => {
       if (!node.depth || !node.children) {
         return;
+      }
+      if (node.depth === 1) {
+        title = (node.children[0] as ChildNode).value;
       }
       // h2 ~ h4
       if (node.depth > 1 && node.depth < 5) {
@@ -84,5 +87,19 @@ export const remarkPluginToc: Plugin<[], Root> = () => {
         })
       } as unknown
     } as MdxjsEsm);
+
+    if (title) {
+      const insertTitleCode = `export const title = '${title}';`;
+      tree.children.push({
+        type: "mdxjsEsm",
+        value: insertTitleCode,
+        data: {
+          estree: parse(insertTitleCode, {
+            ecmaVersion: 2020,
+            sourceType: "module"
+          })
+        } as unknown
+      } as MdxjsEsm);
+    }
   };
 };
