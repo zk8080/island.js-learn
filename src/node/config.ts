@@ -1,7 +1,6 @@
 import { resolve } from "path";
 import fs from "fs-extra";
-import { loadConfigFromFile, normalizePath } from "vite";
-
+import { loadConfigFromFile } from "vite";
 import { SiteConfig, UserConfig } from "../shared/types/index";
 
 type RawConfig = UserConfig | Promise<UserConfig> | (() => UserConfig | Promise<UserConfig>);
@@ -10,25 +9,18 @@ function getUserConfigPath(root: string) {
   try {
     const supportConfigFiles = ["config.ts", "config.js"];
     const configPath = supportConfigFiles.map((file) => resolve(root, file)).find(fs.pathExistsSync);
-    return normalizePath(configPath);
+    return configPath;
   } catch (e) {
     console.error(`Failed to load user config: ${e}`);
     throw e;
   }
 }
 
-export async function resovleUserCofig(root: string, command: "serve" | "build", mode: "development" | "production") {
-  // 1. 获取配置文件路径
+export async function resolveUserConfig(root: string, command: "serve" | "build", mode: "development" | "production") {
+  // 1. 获取配置文件路径，支持 js、ts 格式
   const configPath = getUserConfigPath(root);
-  // 2. 读取配置文件的内容
-  const result = await loadConfigFromFile(
-    {
-      command,
-      mode
-    },
-    configPath,
-    root
-  );
+  // 2. 解析配置文件
+  const result = await loadConfigFromFile({ command, mode }, configPath, root);
 
   if (result) {
     const { config: rawConfig = {} as RawConfig } = result;
@@ -57,14 +49,13 @@ export async function resolveConfig(
   command: "serve" | "build",
   mode: "development" | "production"
 ): Promise<SiteConfig> {
-  const [configPath, userConfig] = await resovleUserCofig(root, command, mode);
-  const siteData: SiteConfig = {
+  const [configPath, userConfig] = await resolveUserConfig(root, command, mode);
+  const siteConfig: SiteConfig = {
     root,
-    configPath,
+    configPath: configPath,
     siteData: resolveSiteData(userConfig as UserConfig)
   };
-
-  return siteData;
+  return siteConfig;
 }
 
 export function defineConfig(config: UserConfig) {

@@ -7,7 +7,7 @@ import styles from "./index.module.scss";
 
 export function DocLayout(props) {
   const { siteData, toc } = usePageData();
-  const sidebarData = siteData.themeConfig.sidebar;
+  const sidebarData = siteData.themeConfig?.sidebar || {};
   const { pathname } = useLocation();
 
   const matchedSidebarKey = Object.keys(sidebarData).find((key) => {
