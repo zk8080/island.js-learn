@@ -1,0 +1,41 @@
+# 1.0.0 (2023-06-28)
+
+
+### Features
+
+* 初始化主题组件，以及组件支持热更新 ([44bb596](https://github.com/zk8080/island.js-learn/commit/44bb59618fc0770f0e9c1ba26cc2112b04b035fc))
+* 导航栏深色模式 ([5b11178](https://github.com/zk8080/island.js-learn/commit/5b111786f543fe97a4453857c377945141a4ae43))
+* 多路由打包逻辑完善 ([87dee48](https://github.com/zk8080/island.js-learn/commit/87dee48334471c3cec610c618e7cbe20e41851a5))
+* 更新单元测试和e2e测试内容，完善测试相关缺陷，保证测试通过 ([88bd2bc](https://github.com/zk8080/island.js-learn/commit/88bd2bc55d35b0fc9fbe8277f68ae176be050e7f))
+* 公共导航栏 ([ff6126d](https://github.com/zk8080/island.js-learn/commit/ff6126db41cbb78b7242700c4c3dd6e18e543c84))
+* 接入react-helmet-async，实现自定义head； ([046165b](https://github.com/zk8080/island.js-learn/commit/046165bf46add0107fb2670aa7784c8949732981))
+* 接入tsup，构建产出cjs以及esm格式文件 ([8ca89bc](https://github.com/zk8080/island.js-learn/commit/8ca89bcec38f7b67c640aa1ddf42a7ecaf7553a7))
+* 开发阶段mdx模块热更新功能实现 ([803aa2e](https://github.com/zk8080/island.js-learn/commit/803aa2e7c88c8fbb5a65326324fd54f212c24849))
+* 配置文件解析 ([a272944](https://github.com/zk8080/island.js-learn/commit/a272944dcddd511766988dd0f1662040be7cf6e6))
+* 入口 HTML 处理 ([c88dfce](https://github.com/zk8080/island.js-learn/commit/c88dfceff20224f6f33b1ddfd263f2a544c8466d))
+* 实现本地预览生产环境构建产物 ([ceb7b36](https://github.com/zk8080/island.js-learn/commit/ceb7b3699d4e94efe4aa04f44553f840941b50c5))
+* 使用ImportMap和预打包解决react多实例问题 ([eacbbae](https://github.com/zk8080/island.js-learn/commit/eacbbae698baa68e9fe4a27e9e4dd9961c0ef105))
+* 添加Unocss插件 ([94755a8](https://github.com/zk8080/island.js-learn/commit/94755a89b67747fed879e241a898ba769c7db8bd))
+* 完成侧边栏模块 ([1a2ad53](https://github.com/zk8080/island.js-learn/commit/1a2ad5308e03e49a3fe17a8f26a09322a11e0bb7))
+* 完成约定式路由Vite插件 ([91791e6](https://github.com/zk8080/island.js-learn/commit/91791e6cae7ab3e97532933e4ec1a20b3ecb7ca4))
+* 完成正文页面渲染组件 ([91f29e8](https://github.com/zk8080/island.js-learn/commit/91f29e879d7c87e4421e3a2391d8c90999ae10a7))
+* 完成自定义jsx runtime逻辑,修改island命令->island-learn命令 ([3bb40b2](https://github.com/zk8080/island.js-learn/commit/3bb40b27f0dcdcb064cab7b3a3deab2e059dc9b5))
+* 完成自定义rehype插件preWrapper ([a4261ea](https://github.com/zk8080/island.js-learn/commit/a4261ea4bcf73e6a01679a91e2dd8f9f03859b5f))
+* 完成自定义rehype代码高亮插件shiki ([bf70d78](https://github.com/zk8080/island.js-learn/commit/bf70d7896b7674415bf1cc91f885a72ba2a762cd))
+* 完成babel插件babel-plugin-island，实现组件__island属性路径信息注入 ([ac2dce9](https://github.com/zk8080/island.js-learn/commit/ac2dce9c60a0268189a18bb3aaad50643a3038a5))
+* 完成Home首页渲染组件 ([f58a947](https://github.com/zk8080/island.js-learn/commit/f58a947773b615154b581d48a8fe7d11227e64fa))
+* 完成islands打包，构造虚拟模块，打包islands组件代码 ([6f069d6](https://github.com/zk8080/island.js-learn/commit/6f069d6624638db59302d2f2412858d4a617d50a))
+* 完成remark插件toc解析插件 ([15f2757](https://github.com/zk8080/island.js-learn/commit/15f27575dd628109ba69762b0c1109ef82f462b8))
+* 完成SSG同构流程开发 ([26c5ba1](https://github.com/zk8080/island.js-learn/commit/26c5ba13d67723cc61cd9320437370f5c4aa6dfd))
+* 完成TOC模块 ([f3a3a0a](https://github.com/zk8080/island.js-learn/commit/f3a3a0a5a2c7ddaa9d51fa3de30cf9fec97e8cea))
+* 完成TOC模块交互逻辑 ([c3637b6](https://github.com/zk8080/island.js-learn/commit/c3637b67e0bdc2224b67467599ed8a348f7bb1ea))
+* 完成TOC模块自定义热更新逻辑及SSR兼容性问题 ([3ee10a8](https://github.com/zk8080/island.js-learn/commit/3ee10a8868e0a233340ec4c681f9cab7a470832d))
+* 页面数据流hooks，共享编译时信息 ([6c015d5](https://github.com/zk8080/island.js-learn/commit/6c015d58d9682f8953c7a00f948a109e153f348c))
+* 约定式路由：前端路由设计及实现 ([c42644b](https://github.com/zk8080/island.js-learn/commit/c42644b506c86e23b7854171090099962cd23184))
+* 整理配置内容，生产站点数据，以及配置变更热更新逻辑 ([334347f](https://github.com/zk8080/island.js-learn/commit/334347f79fc22da7da6db5bbce70fde7508239e6))
+* 注入islands组件bundle和数据信息 ([9979460](https://github.com/zk8080/island.js-learn/commit/9979460abe2133d21c993b7c17a9acacd5ced15c))
+* mdx常用remark/rehype插件集成 ([c7459f9](https://github.com/zk8080/island.js-learn/commit/c7459f9596594a39dc0c35d25cada05b7c0cb97f))
+* mdx处理相关工具链插件安装及test ([f045dab](https://github.com/zk8080/island.js-learn/commit/f045dabe10e203896076020989691201397a2e37))
+
+
+
